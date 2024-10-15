@@ -1,4 +1,12 @@
 icinga2:
+  hostname: icinga2.colewyn.local
+  cert:
+    issuerRef:
+      group: cert-manager.io
+      kind: ClusterIssuer
+      name: selfsigned-cluster-issuer
+    duration: 17520h
+    renewBefore: 17500h
   image:
     repository: icinga/icinga2
     tag: 2.13.7
@@ -11,29 +19,31 @@ icinga2:
   service:
     type: ClusterIP
     port: 5665
-
+ 
   ingress:
-    enabled: false
+    enabled: true
+    path: /
+    servicePort: 5665
     className: ""
     annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
     hosts:
-      - host:  # Add a host here
+      - host: icinga2.colewyn.local
         paths:
           - path: /
             pathType: ImplementationSpecific
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
+    tls:
+    - secretName: icinga2-ingress-cert-fp-pki
+      hosts:
+        - icinga2.colewyn.local
 
   config:
     node_name: icinga2-master
     zone_name: master
     ticket_salt:
-      value:  # Add random (long!) string here
-      credSecret: # Or use existing secret
+      value: icingaadmin # Add random (long!) string here
+      credSecret: icingaadmin # Or use existing secret
       secretKey:
     disable_confd: true
 
@@ -79,7 +89,7 @@ icinga2:
 
     # For configuration information see https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#elasticsearchwriter
     elasticsearch:
-      enabled: false
+      enabled: true
       # host: elasticsearch
       # port: 9200
       # index: icinga2
@@ -362,7 +372,14 @@ icingadb:
 
 icingaweb2:
   enabled: true
-
+  hostname: icingaweb2.colewyn.local
+  cert:
+    issuerRef:
+      group: cert-manager.io
+      kind: ClusterIssuer
+      name: selfsigned-cluster-issuer
+    duration: 17520h
+    renewBefore: 17500h
   image:
     repository: icinga/icingaweb2
     tag: 2.12.1
@@ -377,27 +394,27 @@ icingaweb2:
     port: 8080
 
   ingress:
-    enabled: false
+    enabled: true
     className: ""
     annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
     hosts:
-      - host:  # Add a host here
+      - host: icingaweb2.colewyn.local # Add a host here
         paths:
           - path: /
             pathType: ImplementationSpecific
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
+    tls:
+    - secretName: icingaweb2-ingress-cert-fp-pki
+      hosts:
+        - icingaweb2.colewyn.local
 
   auth:
     type: db
     #resource: # Add the name of the db resource used by Icinga Web 2 here
     admin_user: icingaadmin
-    admin_password:
-      value: # Add a password here
+    admin_password: 
+      value: icingaadmin # Add a password here
       credSecret:
       secretKey:
 
@@ -498,7 +515,7 @@ icingaweb2:
     # runAsUser: 1000
 
   extraEnvVars: []
-
+  
 icinga-kubernetes:
   enabled: true
 
@@ -520,29 +537,29 @@ global:
     users:
       credSecret: # Existing secret for director and icingaweb password
       director:
-        password:
-          value: # Add a password here
-          secretKey: # Or specify secret key
+        password: 
+          value: icingaadmin # Add a password here
+          secretKey: icingaadmin # Or specify secret key
         permissions:
         - "*"
 
       icingaweb:
         password:
-          value: # Add a password here
-          secretKey:  # Or specify secret key
+          value: icingaadmin # Add a password here
+          secretKey: icingaadmin # Or specify secret key
         permissions:
         - "*"
 
   databases:
     director:
       database: directordb
-      credSecret: # Existing secret name for username and password
+      credSecret: icingaadmin # Existing secret name for username and password
       username:
-        value: # Set username
-        secretKey: # Or specify secret key
+        value: icingaadmin # Set username
+        secretKey: icingaadmin # Or specify secret key
       password:
-        value: # Add a password here
-        secretKey: # Or specify secret key
+        value: icingaadmin # Add a password here
+        secretKey: icingaadmin # Or specify secret key
       enabled: true
       # host: mariadb.example.com
       # port: 3306
@@ -558,13 +575,13 @@ global:
 
     icingadb:
       database: icingadb
-      credSecret: # Existing secret name for username and password
+      credSecret: icingaadmin # Existing secret name for username and password
       username:
-        value: # Set username
-        secretKey: # Or specify secret key
+        value: icingaadmin # Set username
+        secretKey: icingaadmin # Or specify secret key
       password:
-        value: # Add a password here
-        secretKey: # Or specify secret key
+        value: icingaadmin # Add a password here
+        secretKey: icingaadmin # Or specify secret key
       enabled: true
       # host: mariadb.example.com
       # port: 3306
@@ -580,13 +597,13 @@ global:
 
     icingaweb2:
       database: icingaweb2db
-      credSecret: # Existing secret name for username and password
+      credSecret: icingaadmin # Existing secret name for username and password
       username:
-        value: # Set username
-        secretKey: # Or specify secret key
+        value: icingaadmin # Set username
+        secretKey: icingaadmin # Or specify secret key
       password:
-        value: # Add a password here
-        secretKey: # Or specify secret key
+        value: icingaadmin # Add a password here
+        secretKey: icingaadmin # Or specify secret key
       enabled: true
       # host: mariadb.example.com
       # port: 3306
@@ -602,13 +619,13 @@ global:
 
     x509:
       database: x509db
-      credSecret: # Existing secret name for username and password
+      credSecret: icingaadmin # Existing secret name for username and password
       username:
-        value: # Set username
-        secretKey: # Or specify secret key
+        value: icingaadmin # Set username
+        secretKey: icingaadmin # Or specify secret key
       password:
-        value: # Add a password here
-        secretKey: # Or specify secret key
+        value: icingaadmin # Add a password here
+        secretKey: icingaadmin # Or specify secret key
       enabled: false
       # host: mariadb.example.com
       # port: 3306
@@ -625,13 +642,13 @@ global:
     kubernetes:
       # Note that using secrets is not yet supported for Icinga Kubernetes.
       database: kubernetes
-      credSecret: # Existing secret name for username and password
+      credSecret: icingaadmin # Existing secret name for username and password
       username:
-        value: # Set username
-        secretKey: # Or specify secret key
+        value: icingaadmin # Set username
+        secretKey: icingaadmin # Or specify secret key
       password:
-        value: # Add a password here
-        secretKey: # Or specify secret key
+        value: icingaadmin # Add a password here
+        secretKey: icingaadmin # Or specify secret key
       enabled: true
       # host: mariadb.example.com
       # port: 3306

@@ -1,3 +1,4 @@
+hostname:
 image:
   repository: icinga/icinga2
   tag: 2.13.7
@@ -9,10 +10,10 @@ fullnameOverride: ""
 
 service:
   type: ClusterIP
-  port: 5665
+  port: 5665  
 
 ingress:
-  enabled: false
+  enabled: 
   className: ""
   annotations: {}
       # kubernetes.io/ingress.class: nginx
@@ -22,11 +23,10 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
+  tls:
+   - secretName: 
+     hosts:
+       - 
 config:
   node_name: icinga2-master
   zone_name: master
@@ -312,3 +312,11 @@ securityContext: {}
   # runAsUser: 1000
 
 extraEnvVars: []
+
+cert:
+  issuerRef:
+    group: 
+    kind:
+    name: 
+  duration: 
+  renewBefore: 

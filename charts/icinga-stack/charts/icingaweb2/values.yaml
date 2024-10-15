@@ -1,5 +1,5 @@
 enabled: true
-
+hostname: ""
 image:
   repository: icinga/icingaweb2
   tag: 2.12.1
@@ -25,11 +25,10 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
+  tls: 
+   - secretName:
+     hosts:
+       - 
 auth:
   type: db
   #resource: # Add the name of the db resource used by Icinga Web 2 here
@@ -134,3 +133,11 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
+
+cert:
+  issuerRef:
+    group: 
+    kind:
+    name: 
+  duration: 
+  renewBefore: 
